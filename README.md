@@ -124,8 +124,8 @@ Only the **Command Line Tools** are required — no Xcode.
 ```bash
 xcode-select --install          # once
 Scripts/build_app.sh            # → dist/Battery Longer.app  (ad-hoc signed)
-Scripts/make_dmg.sh             # → dist/BatteryLonger-1.0.0.dmg
-open dist/BatteryLonger-1.0.0.dmg
+Scripts/make_dmg.sh             # → dist/BatteryLonger-1.0.1.dmg
+open dist/BatteryLonger-1.0.1.dmg
 ```
 
 The Finder window layout (`.DS_Store`) is written directly by `Scripts/dmg_layout.py` (`ds_store` + `mac_alias`, one-time venv in `dist/.dmg-tools`) — no Finder automation permission needed. `LAYOUT=finder Scripts/make_dmg.sh` uses AppleScript instead.
@@ -134,7 +134,7 @@ For distribution sign with a Developer ID and notarize:
 
 ```bash
 SIGN_IDENTITY="Developer ID Application: …" Scripts/build_app.sh
-xcrun notarytool submit dist/BatteryLonger-1.0.0.dmg --keychain-profile … --wait
+xcrun notarytool submit dist/BatteryLonger-1.0.1.dmg --keychain-profile … --wait
 ```
 
 ## Development
@@ -179,3 +179,24 @@ healthy ──violation──▶ warned(deadline = now + grace) ──deadline p
 ## License
 
 [MIT](LICENSE) © 2026 MasterFabric LLC · Gürkan Fikret Günak
+
+## Changelog
+
+### 1.0.1 — current
+
+Polish release for the Settings window.
+
+- **Onboarding banner redesigned.** The introduction card in Settings is now a fixed "paper" card (cream → mint gradient) that no longer follows the system appearance, so it looks the same in light and dark mode.
+- **Sketch blended into the card.** The illustration is composited with a multiply blend and a feathered left edge; the hard white rectangle that showed up in dark mode is gone and the laptop is no longer cropped.
+- **Readable copy on every theme.** Banner text uses fixed ink colours instead of the adaptive label colour, so it never washes out on the light card.
+- Version bump `1.0.0 → 1.0.1`; the DMG is now `BatteryLonger-1.0.1.dmg`.
+
+### 1.0.0
+
+Initial public release.
+
+- 20–80 % rule with one warning, configurable grace period (default 2 min, up to 10 min) and full-screen lock on every display.
+- Menu bar panel with battery range gauge, enforcement timeline, cycle count and health.
+- Settings: thresholds, grace period, launch at login, percentage in menu bar, open panel on warning, statistics.
+- Five UI languages (EN · TR · FR · JA · DE) switchable at runtime.
+- Sketch-style onboarding tour, MacBook-only guard, polished drag-and-drop DMG installer.
