@@ -14,7 +14,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
-
         device = DeviceGuard.inspect()
         Log.info("Device: \(device.displayName) [\(device.modelIdentifier)] battery=\(device.hasInternalBattery)")
 
