@@ -16,7 +16,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
         device = DeviceGuard.inspect()
         Log.info("Device: \(device.displayName) [\(device.modelIdentifier)] battery=\(device.hasInternalBattery)")
-
         guard device.isMacBook || ProcessInfo.processInfo.environment["BLS_SIMULATE"] != nil else {
             refuseNonMacBook()
             return

@@ -18,7 +18,19 @@ struct BatterySnapshot: Equatable {
     var cycleCount: Int?
     /// Current full-charge capacity as a percentage of design capacity.
     var healthPercent: Int?
+    /// Charge currently stored in the cells, mAh (`AppleRawCurrentCapacity`).
+    var currentCapacityMAh: Int?
+    /// What a full charge holds today, mAh (`AppleRawMaxCapacity`).
+    var maxCapacityMAh: Int?
+    /// Factory capacity, mAh (`DesignCapacity`).
+    var designCapacityMAh: Int?
     var timestamp: Date = Date()
+
+    /// True when all three mAh figures are available and sane.
+    var hasCapacityData: Bool {
+        guard let c = currentCapacityMAh, let m = maxCapacityMAh, let d = designCapacityMAh else { return false }
+        return d > 0 && m > 0 && c >= 0
+    }
 
     /// Applies the 20–80 rule to this reading.
     var violation: Violation? {
