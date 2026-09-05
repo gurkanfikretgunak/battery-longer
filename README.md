@@ -68,8 +68,8 @@ On launch the app inspects `IODeviceTree:/product` → `product-name`, `hw.model
 
 <div align="center">
 
-<img src="Docs/Screenshots/01-menu-bar-panel.png" alt="Menu bar panel: 65 %, Safe, range gauge, Deviation → Warning → Lock timeline, source / time / cycles / health" width="420" />
-<br/><sub><strong>1 · Menu bar panel</strong> — live level, state pill, range gauge, enforcement timeline and battery stats</sub>
+<img src="Docs/Screenshots/01-menu-bar-panel.png" alt="Menu bar panel: 59 %, Safe, range gauge, Deviation → Warning → Lock timeline, source / time / cycles / health, mAh capacity bar" width="400" />
+<br/><sub><strong>1 · Menu bar panel</strong> — live level, state pill, range gauge, enforcement timeline, battery stats and the mAh capacity bar</sub>
 
 <br/><br/>
 
