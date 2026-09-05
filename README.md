@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="Packaging/AppIcon-1024.png" alt="Battery Longer icon" width="128" height="128" style="border-radius: 28px; box-shadow: 0 12px 32px rgba(0,0,0,0.25);" />
+<img src="Docs/app-icon-rounded.png" alt="Battery Longer icon" width="128" height="128" />
 
 <h1 style="margin-bottom: 0.2em;">Battery Longer</h1>
 
@@ -191,7 +191,7 @@ Sources/BatteryLonger/
   UI/            BatteryRangeGauge, EnforcementTimeline, CapacityBar, MenuBarView, SettingsView, OnboardingBanner,
                  BlockerView, OnboardingView, Theme
 Resources/Onboarding/   sketch-01…05.png
-Docs/Screenshots/       live app screenshots used in this README
+Docs/                   README assets: app-icon-rounded.png, Screenshots/ (live app)
 Packaging/              Info.plist, AppIcon-1024.png, dmg-background.png
 Scripts/                build_app.sh, make_dmg.sh, dmg_layout.py
 ```
