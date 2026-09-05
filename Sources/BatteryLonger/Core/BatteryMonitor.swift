@@ -103,16 +103,28 @@ final class BatteryMonitor {
                 minutesToEmpty: pluggedIn ? nil : minutes(kIOPSTimeToEmptyKey),
                 minutesToFull: pluggedIn ? minutes(kIOPSTimeToFullChargeKey) : nil,
                 cycleCount: health.cycleCount,
-                healthPercent: health.healthPercent
+                healthPercent: health.healthPercent,
+                currentCapacityMAh: health.currentMAh,
+                maxCapacityMAh: health.maxMAh,
+                designCapacityMAh: health.designMAh
             )
         }
         return nil
     }
 
-    /// Cycle count and health from the AppleSmartBattery registry entry.
-    private static func readSmartBattery() -> (cycleCount: Int?, healthPercent: Int?) {
+    private struct SmartBatteryInfo {
+        var cycleCount: Int?
+        var healthPercent: Int?
+        var currentMAh: Int?
+        var maxMAh: Int?
+        var designMAh: Int?
+    }
+
+    /// Cycle count, health and raw mAh capacities from the AppleSmartBattery registry entry.
+    private static func readSmartBattery() -> SmartBatteryInfo {
+        var info = SmartBatteryInfo()
         let service = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("AppleSmartBattery"))
-        guard service != 0 else { return (nil, nil) }
+        guard service != 0 else { return info }
         defer { IOObjectRelease(service) }
 
         func intProperty(_ key: String) -> Int? {
@@ -121,16 +133,23 @@ final class BatteryMonitor {
             return (value as? NSNumber)?.intValue
         }
 
-        let cycles = intProperty("CycleCount")
-        var health: Int?
-        if let design = intProperty("DesignCapacity"), design > 0 {
-            let full = intProperty("AppleRawMaxCapacity") ?? intProperty("MaxCapacity")
-            if let full, full > 0 {
-                health = Int((Double(full) / Double(design) * 100).rounded())
-                if let h = health, h > 100 { health = 100 }
-            }
+        info.cycleCount = intProperty("CycleCount")
+        info.designMAh = intProperty("DesignCapacity")
+
+        // Apple Silicon reports `MaxCapacity`/`CurrentCapacity` as percentages; the raw keys are mAh.
+        // Intel Macs only have the non-raw keys, which are mAh there. Reject percentage-like values.
+        func mAh(raw: String, legacy: String) -> Int? {
+            if let v = intProperty(raw), v > 0 { return v }
+            if let v = intProperty(legacy), v > 100 { return v }
+            return nil
         }
-        return (cycles, health)
+        info.maxMAh = mAh(raw: "AppleRawMaxCapacity", legacy: "MaxCapacity")
+        info.currentMAh = mAh(raw: "AppleRawCurrentCapacity", legacy: "CurrentCapacity")
+
+        if let design = info.designMAh, design > 0, let full = info.maxMAh, full > 0 {
+            info.healthPercent = min(100, Int((Double(full) / Double(design) * 100).rounded()))
+        }
+        return info
     }
 
     private static func readSimulated() -> BatterySnapshot? {
@@ -146,7 +165,10 @@ final class BatteryMonitor {
             minutesToEmpty: plugged ? nil : level * 6,
             minutesToFull: plugged ? (100 - level) * 2 : nil,
             cycleCount: 137,
-            healthPercent: 93
+            healthPercent: 93,
+            currentCapacityMAh: Int(Double(4_240) * Double(min(100, max(0, level))) / 100),
+            maxCapacityMAh: 4_240,
+            designCapacityMAh: 4_563
         )
     }
 }

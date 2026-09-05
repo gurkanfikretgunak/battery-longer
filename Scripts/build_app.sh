@@ -12,7 +12,7 @@ cd "$ROOT"
 
 APP_NAME="Battery Longer"
 EXECUTABLE="BatteryLonger"
-VERSION="${VERSION:-1.0.1}"
+VERSION="${VERSION:-1.0.2}"
 BUILD_NUMBER="${BUILD_NUMBER:-$(date +%Y%m%d%H%M)}"
 CONFIG="${CONFIG:-release}"
 SIGN_IDENTITY="${SIGN_IDENTITY:--}"   # "-" = ad-hoc

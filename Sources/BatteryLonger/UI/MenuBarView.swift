@@ -20,6 +20,8 @@ struct MenuBarView: View {
                 .padding(.top, 2)
             Divider()
             stats
+            CapacityBar(snapshot: engine.snapshot)
+                .padding(.top, 2)
             Divider()
             controls
         }

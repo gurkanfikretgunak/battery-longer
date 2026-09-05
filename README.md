@@ -64,6 +64,32 @@ On launch the app inspects `IODeviceTree:/product` → `product-name`, `hw.model
 
 ## Screens
 
+### Live app (1.0.2, dark mode)
+
+<div align="center">
+
+<img src="Docs/Screenshots/01-menu-bar-panel.png" alt="Menu bar panel: 65 %, Safe, range gauge, Deviation → Warning → Lock timeline, source / time / cycles / health" width="420" />
+<br/><sub><strong>1 · Menu bar panel</strong> — live level, state pill, range gauge, enforcement timeline and battery stats</sub>
+
+<br/><br/>
+
+<table>
+<tr>
+<td align="center" width="33%"><img src="Docs/Screenshots/02-settings-rule-timing.png" width="100%" alt="Settings: introduction banner, Rule and Timing" /><br/><sub><strong>2 · Settings — Rule &amp; Timing</strong><br/>introduction banner, live preview, limits, warning → lock</sub></td>
+<td align="center" width="33%"><img src="Docs/Screenshots/03-settings-warning-general.png" width="100%" alt="Settings: Warning, Enforcement, General" /><br/><sub><strong>3 · Settings — Warning, Enforcement &amp; General</strong><br/>sound, auto-open panel, sleep on lock, language, login item</sub></td>
+<td align="center" width="33%"><img src="Docs/Screenshots/04-settings-statistics-about.png" width="100%" alt="Settings: Statistics and About" /><br/><sub><strong>4 · Settings — Statistics &amp; About</strong><br/>counters, developer / company / source links</sub></td>
+</tr>
+</table>
+
+<br/>
+
+<img src="Docs/Screenshots/05-onboarding-tour.png" alt="Onboarding tour: The rule — live between 20% and 80%" width="720" />
+<br/><sub><strong>5 · Introduction tour</strong> — sketch on the left, the rule on the right, language switch in the footer</sub>
+
+</div>
+
+### Sketches
+
 <div align="center">
 <table>
 <tr>
@@ -82,6 +108,7 @@ On launch the app inspects `IODeviceTree:/product` → `product-name`, `hw.model
 - **Range gauge** — 0–100 track with red / green / orange zones, live marker and direction of flow
 - **Timeline** — Deviation → Warning (once, 2:00) → Lock, active step highlighted, live countdown
 - **Stats** — power source, time remaining, cycle count, battery health (`AppleSmartBattery`)
+- **Capacity bar** — mAh strip under the stats: solid = charge stored now, light = what a full charge holds today, track = factory design capacity, orange tail = mAh lost to ageing (`AppleRawCurrentCapacity` / `AppleRawMaxCapacity` / `DesignCapacity`)
 - Footer — Settings (`⌘,`), active rule summary (`20–80 % · 2:00`), counters, Quit
 
 **Settings** — grouped form with a live rule preview and a clickable introduction banner at the top.
@@ -124,8 +151,8 @@ Only the **Command Line Tools** are required — no Xcode.
 ```bash
 xcode-select --install          # once
 Scripts/build_app.sh            # → dist/Battery Longer.app  (ad-hoc signed)
-Scripts/make_dmg.sh             # → dist/BatteryLonger-1.0.1.dmg
-open dist/BatteryLonger-1.0.1.dmg
+Scripts/make_dmg.sh             # → dist/BatteryLonger-1.0.2.dmg
+open dist/BatteryLonger-1.0.2.dmg
 ```
 
 The Finder window layout (`.DS_Store`) is written directly by `Scripts/dmg_layout.py` (`ds_store` + `mac_alias`, one-time venv in `dist/.dmg-tools`) — no Finder automation permission needed. `LAYOUT=finder Scripts/make_dmg.sh` uses AppleScript instead.
@@ -134,7 +161,7 @@ For distribution sign with a Developer ID and notarize:
 
 ```bash
 SIGN_IDENTITY="Developer ID Application: …" Scripts/build_app.sh
-xcrun notarytool submit dist/BatteryLonger-1.0.1.dmg --keychain-profile … --wait
+xcrun notarytool submit dist/BatteryLonger-1.0.2.dmg --keychain-profile … --wait
 ```
 
 ## Development
@@ -161,9 +188,10 @@ Sources/BatteryLonger/
                  DeviceGuard (MacBook check), AppSettings, Credits
   Services/      Notifier (UNUserNotificationCenter), AppResources
   Localization/  Localization (language switching, L()), Strings+en/tr/fr/ja/de
-  UI/            BatteryRangeGauge, EnforcementTimeline, MenuBarView, SettingsView, OnboardingBanner,
+  UI/            BatteryRangeGauge, EnforcementTimeline, CapacityBar, MenuBarView, SettingsView, OnboardingBanner,
                  BlockerView, OnboardingView, Theme
 Resources/Onboarding/   sketch-01…05.png
+Docs/Screenshots/       live app screenshots used in this README
 Packaging/              Info.plist, AppIcon-1024.png, dmg-background.png
 Scripts/                build_app.sh, make_dmg.sh, dmg_layout.py
 ```
@@ -182,14 +210,20 @@ healthy ──violation──▶ warned(deadline = now + grace) ──deadline p
 
 ## Changelog
 
-### 1.0.1 — current
+### 1.0.2 — current
+
+- **mAh capacity bar in the menu bar panel.** Under Source / Time / Cycles / Health a new strip shows the real battery capacity: charge stored now vs. what a full charge holds today vs. factory design capacity, with the mAh lost to ageing called out (e.g. `2,589 / 4,318 mAh · Design 4,563 mAh · −245 mAh worn`). Localised in all five languages; numbers are grouped per UI language.
+- Snapshots now carry `currentCapacityMAh`, `maxCapacityMAh`, `designCapacityMAh`; the simulator (`BLS_SIMULATE`) fakes them too.
+- README: live app screenshots section.
+
+### 1.0.1
 
 Polish release for the Settings window.
 
 - **Onboarding banner redesigned.** The introduction card in Settings is now a fixed "paper" card (cream → mint gradient) that no longer follows the system appearance, so it looks the same in light and dark mode.
 - **Sketch blended into the card.** The illustration is composited with a multiply blend and a feathered left edge; the hard white rectangle that showed up in dark mode is gone and the laptop is no longer cropped.
 - **Readable copy on every theme.** Banner text uses fixed ink colours instead of the adaptive label colour, so it never washes out on the light card.
-- Version bump `1.0.0 → 1.0.1`; the DMG is now `BatteryLonger-1.0.1.dmg`.
+- Version bump `1.0.0 → 1.0.1`.
 
 ### 1.0.0
 
